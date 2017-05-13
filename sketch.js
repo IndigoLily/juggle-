@@ -1,14 +1,12 @@
 var things = [];
 var places = [];
-var center;
-var offset;
-var count = 1;
-var percent = 0;
+var sel1 = 0;
+var sel2 = 0;
 
 function setup() {
   createCanvas( 512, 512 );
-  center = createVector( width/2, height/2 );
-  offset = createVector( 0, -1 );
+  const center = createVector( width/2, height/2 );
+  let offset = createVector( 0, -1 );
   for( let i = 0; i < 3; i++ ) {
     things[i] = new thing();
     offset.setMag( things[i].r / sqrt(1) );
@@ -21,18 +19,23 @@ function setup() {
 function draw() {
   clear();
   noStroke();
+  if( frameCount % 30 === 0 ) {
+    let tempPlaces = places.slice();
+    places[sel1] = tempPlaces[sel2];
+    places[sel2] = tempPlaces[sel1];
+    
+    sel1 = (sel1 + 1) % 3;
+    sel2 = (sel1 + 1) % 3;
+    console.log( sel1 +' '+ sel2 );
+  }
   for( let i = 0; i < things.length; i++ ) {
     fill( map( i, 0, things.length-1, 0, 255 ) );
-    let n = (i + count) % things.length;
-    if( abs(things[i].pos.x - places[n].x) < 1 ) {
-      count++;
-      n = (i + count) % things.length;
-      console.log('done');
-      percent = 0;
-    }
-    things[i].pos.x = lerp( things[i].pos.x, places[n].x, percent / ( things[i].r * TAU ) );
-    things[i].pos.y = lerp( things[i].pos.y, places[n].y, percent / ( things[i].r * TAU ) );
-    percent += .5;
+    
+    things[sel1].pos.x = lerp( things[sel1].pos.x, places[sel2].x, 1/30 );
+    things[sel2].pos.x = lerp( things[sel2].pos.x, places[sel1].x, 1/30 );
+    things[sel1].pos.y = lerp( things[sel1].pos.y, places[sel2].y, 1/30 );
+    things[sel2].pos.y = lerp( things[sel2].pos.y, places[sel1].y, 1/30 );
+    
     ellipse( things[i].pos.x, things[i].pos.y, things[i].r, things[i].r);
   }
 }
