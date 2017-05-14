@@ -1,7 +1,8 @@
 var things = [];
 var places = [];
-var sel1 = 0;
-var sel2 = 0;
+var tsel = 1;
+var psel1 = 1;
+var psel2 = 0;
 
 function setup() {
   let size = ( windowWidth > windowHeight ) ? windowHeight : windowWidth;
@@ -23,28 +24,60 @@ function setup() {
 function draw() {
   background( (128 + 256) / 2 - 1 );
   noStroke();
-  if( frameCount > 30 && things[sel1].pos.x - places[sel2].x < .01 ) {
-    things[sel1].pos.x = places[sel2].x;
-    things[sel2].pos.x = places[sel1].x;
-    things[sel1].pos.y = places[sel2].y;
-    things[sel2].pos.y = places[sel1].y;
+  if( abs(things[0].pos.x - places[psel1].x) < .01 ) {
+    things[0].pos.x = places[psel1].x;
+    things[0].pos.y = places[psel1].y;
+    things[tsel].pos.x = places[psel2].x;
+    things[tsel].pos.y = places[psel2].y;
     
-    let tempPlaces = places.slice();
-    places[sel1] = tempPlaces[sel2];
-    places[sel2] = tempPlaces[sel1];
+    // console.log('oops');
     
-    sel1 = (sel1 + 1) % 3;
-    sel2 = (sel1 + 1) % 3;
-    // console.log( sel1 +' '+ sel2 );
+    tsel = (tsel === 1) ? 2 : 1;
+    
+    psel1 = (psel1 + 1) % 3;
+    psel2 = (psel2 + 1) % 3;
+    
   }
   for( let i = 0; i < things.length; i++ ) {
     fill( map( i, 0, things.length-1, 0, 255 ) );
     
-    things[sel1].pos.x = lerp( things[sel1].pos.x, places[sel2].x, 1/30 );
-    things[sel2].pos.x = lerp( things[sel2].pos.x, places[sel1].x, 1/30 );
-    things[sel1].pos.y = lerp( things[sel1].pos.y, places[sel2].y, 1/30 );
-    things[sel2].pos.y = lerp( things[sel2].pos.y, places[sel1].y, 1/30 );
+    let speed = 30
+    things[0].pos.x = lerp( things[0].pos.x, places[psel1].x, 1/speed );
+    things[0].pos.y = lerp( things[0].pos.y, places[psel1].y, 1/speed );
+    things[tsel].pos.x = lerp( things[tsel].pos.x, places[psel2].x, 1/speed );
+    things[tsel].pos.y = lerp( things[tsel].pos.y, places[psel2].y, 1/speed );
     
     ellipse( things[i].pos.x, things[i].pos.y, things[i].r, things[i].r);
+    
+    /*
+    fill( 0, 255, 0 );
+    textSize( 24 );
+    text( i, things[i].pos.x, things[i].pos.y, 256, 256 );
+    fill( 255, 0, 0 );
+    text( i, places[i].x, places[i].y + things[i].r/2, 256, 256)
+    */
   }
 }
+
+/*
+
+T -> P
+0 -> 1
+1 -> 0
+
+0 -> 2
+2 -> 1
+
+0 -> 0
+1 -> 2
+
+0 -> 1
+2 -> 0
+
+0 -> 2
+1 -> 1
+
+0 -> 0
+2 -> 2
+
+*/
