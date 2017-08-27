@@ -3,6 +3,7 @@ body, html {
   padding: 0;
   overflow: hidden;
   background-color: #444;
+  cursor: none;
 }
 canvas {
   position: absolute;
